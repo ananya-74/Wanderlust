@@ -51,7 +51,6 @@ store.on("error", (err) => {
     console.log("Error in mongo session store", err);
 });
 
-
 const sessionOptions = {
     store,
     secret: process.env.SECRET,
@@ -64,14 +63,6 @@ const sessionOptions = {
     },
 };
 
-app.get("/", (req, res) => {
-    res.redirect("/listings");
-});
-
-app.use("/listings", listingRouter);
-app.use("/listings/:id/reviews", reviewRouter);
-app.use("/", userRouter);
-
 app.use(session(sessionOptions));
 app.use(flash());
 
@@ -82,7 +73,6 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-
 app.use((req, res, next) => {
     res.locals.success = req.flash("success");
     res.locals.error = req.flash("error");
@@ -90,15 +80,9 @@ app.use((req, res, next) => {
     next();
 });
 
-// app.get("/demouser", async (req, res) => {
-//     let fakeUser = new User({
-//         email: "student@gmail.com",
-//         username: "delta-student",
-//     });
-
-//     let registeredUser = await User.register(fakeUser, "helloworld");
-//     res.send(registeredUser);
-// });
+app.get("/", (req, res) => {
+    res.redirect("/listings");
+});
 
 app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
@@ -111,7 +95,6 @@ app.all("/*splat",(req, res, next) =>{
 app.use((err, req, res, next) => {
     let { statusCode = 500, message = "Something went wrong!" } = err;
     res.status(statusCode).render("error.ejs", { message });
-    
 });
 
 app.listen(8080, () => {
