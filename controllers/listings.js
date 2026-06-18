@@ -50,12 +50,18 @@ module.exports.showListing = async (req, res) => {
 };
 
 module.exports.createListing = async (req, res) => {
-    let url = req.file.path;
-    let filename = req.file.filename;
+    if (!req.file) {
+        req.flash("error", "Image upload failed. Try again.");
+        return res.redirect("/listings/new");
+    }
 
     const newListing = new Listing(req.body.listing);
     newListing.owner = req.user._id;
-    newListing.image = { url, filename };
+
+    newListing.image = {
+        url: req.file.path,
+        filename: req.file.filename,
+    };
 
     await newListing.save();
 
@@ -84,8 +90,8 @@ module.exports.updateListing = async (req, res) => {
     });
 
     if (typeof req.file !== "undefined") {
-        let url = req.file.path;
-        let filename = req.file.filename;
+        let url = req.file.path || req.file.secure_url;
+        let filename = req.file.filename || req.file.public_id;
 
         listing.image = { url, filename };
         await listing.save();
