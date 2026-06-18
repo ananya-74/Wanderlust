@@ -64,10 +64,13 @@ const sessionOptions = {
     },
 };
 
-// app.get("/", (req, res) => {
-//     res.send("hi , I  am Bot");
-// });
+app.get("/", (req, res) => {
+    res.redirect("/listings");
+});
 
+app.use("/listings", listingRouter);
+app.use("/listings/:id/reviews", reviewRouter);
+app.use("/", userRouter);
 
 app.use(session(sessionOptions));
 app.use(flash());
